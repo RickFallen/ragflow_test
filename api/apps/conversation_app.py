@@ -21,6 +21,7 @@ from api.db.services.user_service import UserTenantService
 from flask import request, Response
 from flask_login import login_required, current_user
 
+import uuid
 from api.db import LLMType
 from api.db.services.dialog_service import DialogService, ConversationService, chat, ask
 from api.db.services.knowledgebase_service import KnowledgebaseService
@@ -137,18 +138,23 @@ def list_convsersation():
 
 
 @manager.route('/completion', methods=['POST'])
-@login_required
 @validate_request("conversation_id", "messages")
 def completion():
     req = request.json
-    msg = []
-    for m in req["messages"]:
-        if m["role"] == "system":
-            continue
-        if m["role"] == "assistant" and not msg:
-            continue
-        msg.append(m)
-    message_id = msg[-1].get("id")
+
+    # Only take the last user message
+    messages = req["messages"]
+    last_msg = None
+    for m in reversed(messages):
+        if m["role"] == "user":
+            last_msg = m
+            break
+
+    if not last_msg:
+        return get_data_error_result(retmsg="No user message found!")
+
+    msg = [last_msg]  # Only use the last message
+    message_id = str(uuid.uuid1())
     try:
         e, conv = ConversationService.get_by_id(req["conversation_id"])
         if not e:
@@ -178,6 +184,8 @@ def completion():
         def stream():
             nonlocal dia, msg, req, conv
             try:
+                if "stream" in req:
+                    del req["stream"]
                 for ans in chat(dia, msg, True, **req):
                     fillin_conv(ans)
                     yield "data:" + json.dumps({"retcode": 0, "retmsg": "", "data": ans}, ensure_ascii=False) + "\n\n"

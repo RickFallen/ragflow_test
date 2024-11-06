@@ -231,7 +231,7 @@ def chat(dialog, messages, stream=True, **kwargs):
     used_token_count, msg = message_fit_in(msg, int(max_tokens * 0.97))
     assert len(msg) >= 2, f"message_fit_in has bug: {msg}"
     prompt = msg[0]["content"]
-    prompt += "\n\n### Query:\n%s" % " ".join(questions)
+    ## prompt += "\n\n### 问题:\n%s" % " ".join(questions)
 
     if "max_tokens" in gen_conf:
         gen_conf["max_tokens"] = min(
@@ -273,8 +273,6 @@ def chat(dialog, messages, stream=True, **kwargs):
         for ans in chat_mdl.chat_streamly(prompt, msg[1:], gen_conf):
             answer = ans
             delta_ans = ans[len(last_ans):]
-            if num_tokens_from_string(delta_ans) < 16:
-                continue
             last_ans = answer
             yield {"answer": answer, "reference": {}, "audio_binary": tts(tts_mdl, delta_ans)}
         delta_ans = answer[len(last_ans):]
