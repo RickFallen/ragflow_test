@@ -9,6 +9,8 @@ services:
         condition: service_healthy
       es01:
         condition: service_healthy
+      llama:
+        condition: service_healthy
     image: ${RAGFLOW_IMAGE}
     container_name: ragflow-server
     ports:
@@ -28,6 +30,34 @@ services:
       - MACOS=${MACOS}
     networks:
       - ragflow
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  llama:
+    image: wytd/llama-server:blas
+    container_name: ragflow-llama
+    ports:
+      - ${LLAMA_PORT}:8080
+    environment:
+      - TZ=${TIMEZONE}
+    command: >
+      --model /app/models/Qwen/Qwen2.5-1.5B-Instruct-GGUF/qwen2.5-1.5b-instruct-q4_0.gguf
+      -t 8
+      -c 4096
+      --cont-batching
+      --cache-reuse 512
+      --no-mmap
+      -ngl 20
+      --prio 3
+      -np 4
+    networks:
+      - ragflow
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
