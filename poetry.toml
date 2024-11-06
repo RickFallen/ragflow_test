@@ -1,4 +1,4 @@
 [virtualenvs]
-in-project = true
-create = true
+in-project = false # 修改 poetry.toml，告诉 Poetry 使用当前 conda 环境而不是创建新环境
+create = false  # 修改 poetry.toml，告诉 Poetry 使用当前 conda 环境而不是创建新环境
 prefer-active-python = true
