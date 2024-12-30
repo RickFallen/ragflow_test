@@ -30,7 +30,7 @@ from api.db import LLMType, ParserType
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.services.llm_service import LLMBundle
 from api.db.services.user_service import UserTenantService
-from api.utils.api_utils import server_error_response, get_data_error_result, validate_request
+from api.utils.api_utils import server_error_response, get_data_error_result, validate_request, exp_required
 from api.db.services.document_service import DocumentService
 from api.settings import RetCode, retrievaler, kg_retrievaler
 from api.utils.api_utils import get_json_result
@@ -40,6 +40,7 @@ import re
 
 @manager.route('/list', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("doc_id")
 def list_chunk():
     req = request.json
@@ -91,6 +92,7 @@ def list_chunk():
 
 @manager.route('/get', methods=['GET'])
 @login_required
+@exp_required
 def get():
     chunk_id = request.args["chunk_id"]
     try:
@@ -122,6 +124,7 @@ def get():
 
 @manager.route('/set', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("doc_id", "chunk_id", "content_with_weight",
                   "important_kwd")
 def set():
@@ -171,6 +174,7 @@ def set():
 
 @manager.route('/switch', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("chunk_ids", "available_int", "doc_id")
 def switch():
     req = request.json
@@ -188,6 +192,7 @@ def switch():
 
 @manager.route('/rm', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("chunk_ids", "doc_id")
 def rm():
     req = request.json
@@ -208,6 +213,7 @@ def rm():
 
 @manager.route('/create', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("doc_id", "content_with_weight")
 def create():
     req = request.json
@@ -251,6 +257,7 @@ def create():
 
 @manager.route('/retrieval_test', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("kb_id", "question")
 def retrieval_test():
     req = request.json
@@ -308,6 +315,7 @@ def retrieval_test():
 
 @manager.route('/knowledge_graph', methods=['GET'])
 @login_required
+@exp_required
 def knowledge_graph():
     doc_id = request.args["doc_id"]
     req = {

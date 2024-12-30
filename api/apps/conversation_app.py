@@ -28,12 +28,13 @@ from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.services.llm_service import LLMBundle, TenantService, TenantLLMService
 from api.settings import RetCode, retrievaler
 from api.utils.api_utils import get_json_result
-from api.utils.api_utils import server_error_response, get_data_error_result, validate_request
+from api.utils.api_utils import server_error_response, get_data_error_result, validate_request, exp_required
 from graphrag.mind_map_extractor import MindMapExtractor
 
 
 @manager.route('/set', methods=['POST'])
 @login_required
+@exp_required
 def set_conversation():
     req = request.json
     conv_id = req.get("conversation_id")
@@ -75,6 +76,7 @@ def set_conversation():
 
 @manager.route('/get', methods=['GET'])
 @login_required
+@exp_required
 def get():
     conv_id = request.args["conversation_id"]
     try:
@@ -97,6 +99,7 @@ def get():
 
 @manager.route('/rm', methods=['POST'])
 @login_required
+@exp_required
 def rm():
     conv_ids = request.json["conversation_ids"]
     try:
@@ -120,6 +123,7 @@ def rm():
 
 @manager.route('/list', methods=['GET'])
 @login_required
+@exp_required
 def list_convsersation():
     dialog_id = request.args["dialog_id"]
     try:
@@ -138,6 +142,7 @@ def list_convsersation():
 
 
 @manager.route('/completion', methods=['POST'])
+@exp_required
 @validate_request("conversation_id", "messages")
 def completion():
     req = request.json
@@ -219,6 +224,7 @@ def completion():
 
 @manager.route('/tts', methods=['POST'])
 @login_required
+@exp_required
 def tts():
     req = request.json
     text = req["text"]
@@ -253,6 +259,7 @@ def tts():
 
 @manager.route('/delete_msg', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("conversation_id", "message_id")
 def delete_msg():
     req = request.json
@@ -276,6 +283,7 @@ def delete_msg():
 
 @manager.route('/thumbup', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("conversation_id", "message_id")
 def thumbup():
     req = request.json
@@ -301,6 +309,7 @@ def thumbup():
 
 @manager.route('/ask', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("question", "kb_ids")
 def ask_about():
     req = request.json
@@ -326,6 +335,7 @@ def ask_about():
 
 @manager.route('/mindmap', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("question", "kb_ids")
 def mindmap():
     req = request.json
@@ -348,6 +358,7 @@ def mindmap():
 
 @manager.route('/related_questions', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("question")
 def related_questions():
     req = request.json

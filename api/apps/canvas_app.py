@@ -20,19 +20,21 @@ from flask_login import login_required, current_user
 from api.db.services.canvas_service import CanvasTemplateService, UserCanvasService
 from api.settings import RetCode
 from api.utils import get_uuid
-from api.utils.api_utils import get_json_result, server_error_response, validate_request, get_data_error_result
+from api.utils.api_utils import get_json_result, server_error_response, validate_request, get_data_error_result, exp_required
 from agent.canvas import Canvas
 from peewee import MySQLDatabase, PostgresqlDatabase
 
 
 @manager.route('/templates', methods=['GET'])
 @login_required
+@exp_required
 def templates():
     return get_json_result(data=[c.to_dict() for c in CanvasTemplateService.get_all()])
 
 
 @manager.route('/list', methods=['GET'])
 @login_required
+@exp_required
 def canvas_list():
     return get_json_result(data=sorted([c.to_dict() for c in \
                                  UserCanvasService.query(user_id=current_user.id)], key=lambda x: x["update_time"]*-1)
@@ -42,6 +44,7 @@ def canvas_list():
 @manager.route('/rm', methods=['POST'])
 @validate_request("canvas_ids")
 @login_required
+@exp_required
 def rm():
     for i in request.json["canvas_ids"]:
         if not UserCanvasService.query(user_id=current_user.id,id=i):
@@ -55,6 +58,7 @@ def rm():
 @manager.route('/set', methods=['POST'])
 @validate_request("dsl", "title")
 @login_required
+@exp_required
 def save():
     req = request.json
     req["user_id"] = current_user.id
@@ -78,6 +82,7 @@ def save():
 
 @manager.route('/get/<canvas_id>', methods=['GET'])
 @login_required
+@exp_required
 def get(canvas_id):
     e, c = UserCanvasService.get_by_id(canvas_id)
     if not e:
@@ -88,6 +93,7 @@ def get(canvas_id):
 @manager.route('/completion', methods=['POST'])
 @validate_request("id")
 @login_required
+@exp_required
 def run():
     req = request.json
     stream = req.get("stream", True)
@@ -162,6 +168,7 @@ def run():
 @manager.route('/reset', methods=['POST'])
 @validate_request("id")
 @login_required
+@exp_required
 def reset():
     req = request.json
     try:
@@ -185,6 +192,7 @@ def reset():
 @manager.route('/test_db_connect', methods=['POST'])
 @validate_request("db_type", "database", "username", "host", "port", "password")
 @login_required
+@exp_required
 def test_db_connect():
     req = request.json
     try:

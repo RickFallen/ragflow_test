@@ -22,7 +22,7 @@ from api.db.services.file_service import FileService
 from flask import request
 from flask_login import login_required, current_user
 from api.db.services.knowledgebase_service import KnowledgebaseService
-from api.utils.api_utils import server_error_response, get_data_error_result, validate_request
+from api.utils.api_utils import server_error_response, get_data_error_result, validate_request, exp_required
 from api.utils import get_uuid
 from api.db import FileType
 from api.db.services.document_service import DocumentService
@@ -34,6 +34,7 @@ from rag.utils.es_conn import ELASTICSEARCH
 
 @manager.route('/convert', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("file_ids", "kb_ids")
 def convert():
     req = request.json
@@ -98,6 +99,7 @@ def convert():
 
 @manager.route('/rm', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("file_ids")
 def rm():
     req = request.json

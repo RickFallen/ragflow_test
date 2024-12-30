@@ -32,7 +32,7 @@ from api.settings import RetCode, GITHUB_OAUTH, FEISHU_OAUTH, CHAT_MDL, EMBEDDIN
 from api.db.services.user_service import UserService, TenantService, UserTenantService
 from api.db.services.file_service import FileService
 from api.settings import stat_logger
-from api.utils.api_utils import get_json_result, construct_response
+from api.utils.api_utils import get_json_result, construct_response, exp_required
 
 
 @manager.route('/login', methods=['POST', 'GET'])
@@ -247,6 +247,7 @@ def log_out():
 
 @manager.route("/setting", methods=["POST"])
 @login_required
+@exp_required
 def setting_user():
     update_dict = {}
     request_data = request.json
@@ -275,6 +276,7 @@ def setting_user():
 
 @manager.route("/info", methods=["GET"])
 @login_required
+@exp_required
 def user_profile():
     return get_json_result(data=current_user.to_dict())
 
@@ -401,6 +403,7 @@ def user_add():
 
 @manager.route("/tenant_info", methods=["GET"])
 @login_required
+@exp_required
 def tenant_info():
     try:
         tenants = TenantService.get_info_by(current_user.id)
@@ -413,6 +416,7 @@ def tenant_info():
 
 @manager.route("/set_tenant_info", methods=["POST"])
 @login_required
+@exp_required
 @validate_request("tenant_id", "asr_id", "embd_id", "img2txt_id", "llm_id")
 def set_tenant_info():
     req = request.json

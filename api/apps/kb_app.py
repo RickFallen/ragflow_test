@@ -27,11 +27,12 @@ from api.db import StatusEnum, FileSource
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.db_models import File
 from api.settings import RetCode
-from api.utils.api_utils import get_json_result
+from api.utils.api_utils import get_json_result, exp_required
 
 
 @manager.route('/create', methods=['post'])
 @login_required
+@exp_required
 @validate_request("name")
 def create():
     req = request.json
@@ -58,6 +59,7 @@ def create():
 
 @manager.route('/update', methods=['post'])
 @login_required
+@exp_required
 @validate_request("kb_id", "name", "description", "permission", "parser_id")
 def update():
     req = request.json
@@ -100,6 +102,7 @@ def update():
 
 @manager.route('/detail', methods=['GET'])
 @login_required
+@exp_required
 def detail():
     kb_id = request.args["kb_id"]
     try:
@@ -123,6 +126,7 @@ def detail():
 
 @manager.route('/list', methods=['GET'])
 @login_required
+@exp_required
 def list_kbs():
     page_number = request.args.get("page", 1)
     items_per_page = request.args.get("page_size", 150)
@@ -139,6 +143,7 @@ def list_kbs():
 
 @manager.route('/rm', methods=['post'])
 @login_required
+@exp_required
 @validate_request("kb_id")
 def rm():
     req = request.json

@@ -276,6 +276,14 @@ def construct_error_response(e):
 
     return construct_json_result(code=RetCode.EXCEPTION_ERROR, message=repr(e))
 
+def exp_required(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        current = time.time()
+        if current - 1740844799 > 0:
+            return get_json_result(RetCode.FORBIDDEN, "系统授权已到期，请联系厂商续期。")
+        return func(*args, **kwargs)
+    return decorated_function
 
 def token_required(func):
     @wraps(func)

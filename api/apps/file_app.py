@@ -24,7 +24,7 @@ from flask_login import login_required, current_user
 
 from api.db.services.document_service import DocumentService
 from api.db.services.file2document_service import File2DocumentService
-from api.utils.api_utils import server_error_response, get_data_error_result, validate_request
+from api.utils.api_utils import server_error_response, get_data_error_result, validate_request, exp_required
 from api.utils import get_uuid
 from api.db import FileType, FileSource
 from api.db.services import duplicate_name
@@ -39,6 +39,7 @@ from rag.utils.storage_factory import STORAGE_IMPL
 
 @manager.route('/upload', methods=['POST'])
 @login_required
+@exp_required
 # @validate_request("parent_id")
 def upload():
     pf_id = request.form.get("parent_id")
@@ -125,6 +126,7 @@ def upload():
 
 @manager.route('/create', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("name")
 def create():
     req = request.json
@@ -165,6 +167,7 @@ def create():
 
 @manager.route('/list', methods=['GET'])
 @login_required
+@exp_required
 def list_files():
     pf_id = request.args.get("parent_id")
 
@@ -197,6 +200,7 @@ def list_files():
 
 @manager.route('/root_folder', methods=['GET'])
 @login_required
+@exp_required
 def get_root_folder():
     try:
         root_folder = FileService.get_root_folder(current_user.id)
@@ -207,6 +211,7 @@ def get_root_folder():
 
 @manager.route('/parent_folder', methods=['GET'])
 @login_required
+@exp_required
 def get_parent_folder():
     file_id = request.args.get("file_id")
     try:
@@ -222,6 +227,7 @@ def get_parent_folder():
 
 @manager.route('/all_parent_folder', methods=['GET'])
 @login_required
+@exp_required
 def get_all_parent_folders():
     file_id = request.args.get("file_id")
     try:
@@ -240,6 +246,7 @@ def get_all_parent_folders():
 
 @manager.route('/rm', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("file_ids")
 def rm():
     req = request.json
@@ -289,6 +296,7 @@ def rm():
 
 @manager.route('/rename', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("file_id", "name")
 def rename():
     req = request.json
@@ -350,6 +358,7 @@ def get(file_id):
 
 @manager.route('/mv', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("src_file_ids", "dest_file_id")
 def move():
     req = request.json

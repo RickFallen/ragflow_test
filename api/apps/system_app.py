@@ -25,7 +25,7 @@ from api.db.services.user_service import UserTenantService
 from api.settings import DATABASE_TYPE
 from api.utils import current_timestamp, datetime_format
 from api.utils.api_utils import get_json_result, get_data_error_result, server_error_response, \
-    generate_confirmation_token, request, validate_request
+    generate_confirmation_token, request, validate_request, exp_required
 from api.versions import get_rag_version
 from rag.utils.es_conn import ELASTICSEARCH
 from rag.utils.storage_factory import STORAGE_IMPL, STORAGE_IMPL_TYPE
@@ -36,12 +36,14 @@ from rag.utils.redis_conn import REDIS_CONN
 
 @manager.route('/version', methods=['GET'])
 @login_required
+@exp_required
 def version():
     return get_json_result(data=get_rag_version())
 
 
 @manager.route('/status', methods=['GET'])
 @login_required
+@exp_required
 def status():
     res = {}
     st = timer()
@@ -97,6 +99,7 @@ def status():
 
 @manager.route('/new_token', methods=['POST'])
 @login_required
+@exp_required
 def new_token():
     try:
         tenants = UserTenantService.query(user_id=current_user.id)
@@ -121,6 +124,7 @@ def new_token():
 
 @manager.route('/token_list', methods=['GET'])
 @login_required
+@exp_required
 def token_list():
     try:
         tenants = UserTenantService.query(user_id=current_user.id)
@@ -135,6 +139,7 @@ def token_list():
 
 @manager.route('/token/<token>', methods=['DELETE'])
 @login_required
+@exp_required
 def rm(token):
     APITokenService.filter_delete(
                 [APIToken.tenant_id == current_user.id, APIToken.token == token])

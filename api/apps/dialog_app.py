@@ -21,13 +21,14 @@ from api.db import StatusEnum
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.services.user_service import TenantService, UserTenantService
 from api.settings import RetCode
-from api.utils.api_utils import server_error_response, get_data_error_result, validate_request
+from api.utils.api_utils import server_error_response, get_data_error_result, validate_request, exp_required
 from api.utils import get_uuid
 from api.utils.api_utils import get_json_result
 
 
 @manager.route('/set', methods=['POST'])
 @login_required
+@exp_required
 def set_dialog():
     req = request.json
     dialog_id = req.get("dialog_id")
@@ -121,6 +122,7 @@ def set_dialog():
 
 @manager.route('/get', methods=['GET'])
 @login_required
+@exp_required
 def get():
     dialog_id = request.args["dialog_id"]
     try:
@@ -147,6 +149,7 @@ def get_kb_names(kb_ids):
 
 @manager.route('/list', methods=['GET'])
 @login_required
+@exp_required
 def list_dialogs():
     try:
         diags = DialogService.query(
@@ -164,6 +167,7 @@ def list_dialogs():
 
 @manager.route('/rm', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("dialog_ids")
 def rm():
     req = request.json

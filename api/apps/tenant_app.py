@@ -22,11 +22,12 @@ from api.db.db_models import UserTenant
 from api.db.services.user_service import UserTenantService, UserService
 
 from api.utils import get_uuid, delta_seconds
-from api.utils.api_utils import get_json_result, validate_request, server_error_response, get_data_error_result
+from api.utils.api_utils import get_json_result, validate_request, server_error_response, get_data_error_result, exp_required
 
 
 @manager.route("/<tenant_id>/user/list", methods=["GET"])
 @login_required
+@exp_required
 def user_list(tenant_id):
     try:
         users = UserTenantService.get_by_tenant_id(tenant_id)
@@ -39,6 +40,7 @@ def user_list(tenant_id):
 
 @manager.route('/<tenant_id>/user', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("email")
 def create(tenant_id):
     req = request.json
@@ -69,6 +71,7 @@ def create(tenant_id):
 
 @manager.route('/<tenant_id>/user/<user_id>', methods=['DELETE'])
 @login_required
+@exp_required
 def rm(tenant_id, user_id):
     try:
         UserTenantService.filter_delete([UserTenant.tenant_id == tenant_id, UserTenant.user_id == user_id])
@@ -79,6 +82,7 @@ def rm(tenant_id, user_id):
 
 @manager.route("/list", methods=["GET"])
 @login_required
+@exp_required
 def tenant_list():
     try:
         users = UserTenantService.get_tenants_by_user_id(current_user.id)
@@ -91,6 +95,7 @@ def tenant_list():
 
 @manager.route("/agree/<tenant_id>", methods=["PUT"])
 @login_required
+@exp_required
 def agree(tenant_id):
     try:
         UserTenantService.filter_update([UserTenant.tenant_id == tenant_id, UserTenant.user_id == current_user.id], {"role": UserTenantRole.NORMAL})

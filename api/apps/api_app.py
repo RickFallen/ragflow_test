@@ -35,7 +35,7 @@ from api.db.services.user_service import UserTenantService
 from api.settings import RetCode, retrievaler
 from api.utils import get_uuid, current_timestamp, datetime_format
 from api.utils.api_utils import server_error_response, get_data_error_result, get_json_result, validate_request, \
-    generate_confirmation_token
+    generate_confirmation_token, exp_required
 
 from api.utils.file_utils import filename_type, thumbnail
 from rag.utils.storage_factory import STORAGE_IMPL
@@ -47,6 +47,7 @@ from functools import partial
 
 @manager.route('/new_token', methods=['POST'])
 @login_required
+@exp_required
 def new_token():
     req = request.json
     try:
@@ -77,6 +78,7 @@ def new_token():
 
 @manager.route('/token_list', methods=['GET'])
 @login_required
+@exp_required
 def token_list():
     try:
         tenants = UserTenantService.query(user_id=current_user.id)
@@ -93,6 +95,7 @@ def token_list():
 @manager.route('/rm', methods=['POST'])
 @validate_request("tokens", "tenant_id")
 @login_required
+@exp_required
 def rm():
     req = request.json
     try:
@@ -106,6 +109,7 @@ def rm():
 
 @manager.route('/stats', methods=['GET'])
 @login_required
+@exp_required
 def stats():
     try:
         tenants = UserTenantService.query(user_id=current_user.id)

@@ -22,13 +22,14 @@ from api.settings import LIGHTEN
 from api.utils.api_utils import server_error_response, get_data_error_result, validate_request
 from api.db import StatusEnum, LLMType
 from api.db.db_models import TenantLLM
-from api.utils.api_utils import get_json_result
+from api.utils.api_utils import get_json_result, exp_required
 from rag.llm import EmbeddingModel, ChatModel, RerankModel, CvModel, TTSModel
 import requests
 
 
 @manager.route('/factories', methods=['GET'])
 @login_required
+@exp_required
 def factories():
     try:
         fac = LLMFactoriesService.get_all()
@@ -51,6 +52,7 @@ def factories():
 
 @manager.route('/set_api_key', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("llm_factory", "api_key")
 def set_api_key():
     req = request.json
@@ -128,6 +130,7 @@ def set_api_key():
 
 @manager.route('/add_llm', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("llm_factory")
 def add_llm():
     req = request.json
@@ -289,6 +292,7 @@ def add_llm():
 
 @manager.route('/delete_llm', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("llm_factory", "llm_name")
 def delete_llm():
     req = request.json
@@ -299,6 +303,7 @@ def delete_llm():
 
 @manager.route('/delete_factory', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("llm_factory")
 def delete_factory():
     req = request.json
@@ -309,6 +314,7 @@ def delete_factory():
 
 @manager.route('/my_llms', methods=['GET'])
 @login_required
+@exp_required
 def my_llms():
     try:
         res = {}
@@ -330,6 +336,7 @@ def my_llms():
 
 @manager.route('/list', methods=['GET'])
 @login_required
+@exp_required
 def list_app():
     self_deploied = ["Youdao","FastEmbed", "BAAI", "Ollama", "Xinference", "LocalAI", "LM-Studio"]
     weighted = ["Youdao","FastEmbed", "BAAI"] if LIGHTEN != 0 else []

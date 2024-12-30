@@ -30,7 +30,7 @@ from rag.nlp import search
 from rag.utils.es_conn import ELASTICSEARCH
 from api.db.services import duplicate_name
 from api.db.services.knowledgebase_service import KnowledgebaseService
-from api.utils.api_utils import server_error_response, get_data_error_result, validate_request
+from api.utils.api_utils import server_error_response, get_data_error_result, validate_request, exp_required
 from api.utils import get_uuid
 from api.db import FileType, TaskStatus, ParserType, FileSource
 from api.db.services.document_service import DocumentService, doc_upload_and_parse
@@ -44,6 +44,7 @@ from api.contants import IMG_BASE64_PREFIX
 
 @manager.route('/upload', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("kb_id")
 def upload():
     kb_id = request.form.get("kb_id")
@@ -73,6 +74,7 @@ def upload():
 
 @manager.route('/web_crawl', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("kb_id", "name", "url")
 def web_crawl():
     kb_id = request.form.get("kb_id")
@@ -139,6 +141,7 @@ def web_crawl():
 
 @manager.route('/create', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("name", "kb_id")
 def create():
     req = request.json
@@ -175,6 +178,7 @@ def create():
 
 @manager.route('/list', methods=['GET'])
 @login_required
+@exp_required
 def list_docs():
     kb_id = request.args.get("kb_id")
     if not kb_id:
@@ -210,6 +214,7 @@ def list_docs():
 
 @manager.route('/infos', methods=['POST'])
 @login_required
+@exp_required
 def docinfos():
     req = request.json
     doc_ids = req["doc_ids"]
@@ -246,6 +251,7 @@ def thumbnails():
 
 @manager.route('/change_status', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("doc_id", "status")
 def change_status():
     req = request.json
@@ -294,6 +300,7 @@ def change_status():
 
 @manager.route('/rm', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("doc_id")
 def rm():
     req = request.json
@@ -343,6 +350,7 @@ def rm():
 
 @manager.route('/run', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("doc_ids", "run")
 def run():
     req = request.json
@@ -383,6 +391,7 @@ def run():
 
 @manager.route('/rename', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("doc_id", "name")
 def rename():
     req = request.json
@@ -449,6 +458,7 @@ def get(doc_id):
 
 @manager.route('/change_parser', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("doc_id", "parser_id")
 def change_parser():
     req = request.json
@@ -512,6 +522,7 @@ def get_image(image_id):
 
 @manager.route('/upload_and_parse', methods=['POST'])
 @login_required
+@exp_required
 @validate_request("conversation_id")
 def upload_and_parse():
     if 'file' not in request.files:
