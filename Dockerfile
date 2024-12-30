@@ -101,6 +101,9 @@ RUN --mount=type=bind,source=huggingface.co,target=/huggingface.co \
         /huggingface.co/maidalun1020/bce-reranker-base_v1 \
         | tar -xf - --strip-components=2 -C /root/.ragflow
 
+RUN mkdir -p /tmp/data-gym-cache
+COPY titoken/cl100k_base.tiktoken /tmp/data-gym-cache/9b5ad71b2ce5302211f9c61530b329a4922fc6a4
+
 # Copy nltk data downloaded via download_deps.py
 COPY nltk_data /root/nltk_data
 
